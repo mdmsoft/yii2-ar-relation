@@ -58,6 +58,7 @@ class EditableList extends \yii\widgets\ListView
 
     protected function getClientOptions()
     {
+        $class = $this->modelClass;
         $result = [
             'counter' => $this->dataProvider->getCount(),
             'template' => $this->renderItem(new $class, '', '_index_'),
