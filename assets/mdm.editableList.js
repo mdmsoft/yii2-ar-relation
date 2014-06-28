@@ -35,16 +35,23 @@
                 // delete button
                 $(document).off('click.mdmEditableList', btnDelSel).on('click.mdmEditableList', btnDelSel, function() {
                     $(this).closest(rowSelector).remove();
-                    $e.rearrage();
+                    $e.mdmEditableList('rearrage');
                 });
 
                 // select/togle row by click
                 $(document).off('click.mdmEditableList', rowSelector).on('click.mdmEditableList', rowSelector, function() {
                     var $this = $(this);
                     if ($this.is(rowSelector)) {
-                        $e.togleSelectRow($this);
+                        $e.mdmEditableList('toggleSelectRow', ($this));
                     }
                 });
+                var elem = this;
+                $(rowSelector).each(function() {
+                    if (settings.afterRow !== undefined) {
+                        settings.afterRow.call(elem, $(this));
+                    }
+                });
+                $e.mdmEditableList('rearrage');
             });
         },
         rearrage: function() {
@@ -52,7 +59,7 @@
             var settings = listData[$e.prop('id')].settings;
             var no = 1;
             $e.children(settings.itemTag).each(function() {
-                $(this).find('span.serial').text(no++);
+                $(this).find('.serial').text(no++);
             });
         },
         addRow: function() {
@@ -63,7 +70,7 @@
                 settings.afterRow.call(this, $row);
             }
             $e.append($row);
-            $e.rearrage();
+            $e.mdmEditableList('rearrage');
             return $row;
         },
         getSelectedRows: function() {
@@ -89,7 +96,7 @@
             });
             return rows;
         },
-        togelSelectRow: function($row) {
+        toggleSelectRow: function($row) {
             var $e = $(this);
             var settings = listData[$e.prop('id')].settings;
             if (!settings.multiSelect) {

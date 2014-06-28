@@ -107,8 +107,7 @@ class RelationBehavior extends \yii\base\Behavior
                     call_user_func($options['afterSave'], $detail, $index);
                 }
             }
-            return true;
         }
-        return $modelDetails;
+        return [!$error,$modelDetails];
     }
 }

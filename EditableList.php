@@ -29,6 +29,7 @@ class EditableList extends \yii\widgets\ListView
     public $modelClass;
     public $afterRow;
 
+    public $layout = "{items}";
     public function init()
     {
         if ($this->modelClass === null) {
@@ -51,7 +52,7 @@ class EditableList extends \yii\widgets\ListView
         $id = $this->options['id'];
         $options = Json::encode($this->getClientOptions());
         $view = $this->getView();
-        DetailListViewAsset::register($view);
+        EditableListAsset::register($view);
         $view->registerJs("jQuery('#$id').mdmEditableList($options);");
         parent::run();
     }
