@@ -15,7 +15,10 @@
         template: undefined,
         multiSelect: false,
         itemTag: 'div',
-        counter: 0
+        counter: 0,
+        initRow: undefined,
+        afterAddRow: undefined,
+        afterInit: undefined,
     };
 
     var listData = {
@@ -33,24 +36,35 @@
                 var rowSelector = "#" + id + " > " + settings.itemTag;
 
                 // delete button
-                $(document).off('click.mdmEditableList', btnDelSel).on('click.mdmEditableList', btnDelSel, function() {
-                    $(this).closest(rowSelector).remove();
-                    $e.mdmEditableList('rearrage');
-                });
+                $(document)
+                    .off('click.mdmEditableList', btnDelSel)
+                    .on('click.mdmEditableList', btnDelSel, function(event) {
+                        $(this).closest(rowSelector).remove();
+                        $e.mdmEditableList('rearrage');
+                        event.preventDefault();
+                        return false;
+                    });
 
                 // select/togle row by click
-                $(document).off('click.mdmEditableList', rowSelector).on('click.mdmEditableList', rowSelector, function() {
-                    var $this = $(this);
-                    if ($this.is(rowSelector)) {
-                        $e.mdmEditableList('toggleSelectRow', ($this));
-                    }
-                });
+                $(document)
+                    .off('click.mdmEditableList', rowSelector)
+                    .on('click.mdmEditableList', rowSelector, function() {
+                        var $this = $(this);
+                        if ($this.is(rowSelector)) {
+                            $e.mdmEditableList('toggleSelectRow', ($this));
+                        }
+                    });
                 var elem = this;
                 $(rowSelector).each(function() {
-                    if (settings.afterRow !== undefined) {
-                        settings.afterRow.call(elem, $(this));
+                    if (settings.initRow !== undefined) {
+                        settings.initRow.call(elem, $(this));
                     }
                 });
+
+                if (settings.afterInit !== undefined) {
+                    settings.afterInit.call(elem);
+                }
+                
                 $e.mdmEditableList('rearrage');
             });
         },
@@ -66,8 +80,8 @@
             var $e = $(this);
             var settings = listData[$e.prop('id')].settings;
             var $row = $(settings.template.replace(/_index_/g, settings.counter++));
-            if (settings.afterRow !== undefined) {
-                settings.afterRow.call(this, $row);
+            if (settings.afterAddRow !== undefined) {
+                settings.afterAddRow.call(this, $row);
             }
             $e.append($row);
             $e.mdmEditableList('rearrage');
@@ -102,8 +116,15 @@
             if (!settings.multiSelect) {
                 $e.children(settings.itemTag).removeClass('selected');
             }
-            $row.toggleClass('selected')
-            return $e.children(settings.itemTag + '.selected').first();
+            $row.toggleClass('selected');
+        },
+        selectRow: function($row) {
+            var $e = $(this);
+            var settings = listData[$e.prop('id')].settings;
+            if (!settings.multiSelect) {
+                $e.children(settings.itemTag).removeClass('selected');
+            }
+            $row.addClass('selected');
         },
         destroy: function() {
             return this.each(function() {

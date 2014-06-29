@@ -27,9 +27,9 @@ class EditableList extends \yii\widgets\ListView
      * @var string 
      */
     public $modelClass;
-    public $afterRow;
-
+    public $clientOptions = [];
     public $layout = "{items}";
+
     public function init()
     {
         if ($this->modelClass === null) {
@@ -60,14 +60,12 @@ class EditableList extends \yii\widgets\ListView
     protected function getClientOptions()
     {
         $class = $this->modelClass;
-        $result = [
+        $result = array_merge($this->clientOptions, [
             'counter' => $this->dataProvider->getCount(),
             'template' => $this->renderItem(new $class, '', '_index_'),
             'itemTag' => ArrayHelper::getValue($this->itemOptions, 'tag', 'div'),
-        ];
-        if ($this->afterRow !== null) {
-            $result['afterRow'] = $this->afterRow;
-        }
+        ]);
+
         return $result;
     }
 }

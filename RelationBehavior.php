@@ -3,6 +3,8 @@
 namespace mdm\relation;
 
 use Yii;
+use yii\helpers\VarDumper;
+
 /**
  * Description of RelationBehavior
  *
@@ -30,6 +32,7 @@ class RelationBehavior extends \yii\base\Behavior
         $indexBy = false;
         if (!empty($options['indexBy'])) {
             $indexBy = $options['indexBy'];
+            $oldIndexBy = $relation->indexBy;
             $relation->indexBy($indexBy);
         }
         $children = $relation->all();
@@ -81,18 +84,16 @@ class RelationBehavior extends \yii\base\Behavior
             $values = [];
             if (!empty($columns)) {
                 $columns = array_keys($columns);
+                Yii::trace('primary columns = ', __CLASS__);
                 foreach ($children as $child) {
-                    if ($child === false) {
-                        continue;
-                    }
                     $value = [];
                     foreach ($columns as $column) {
-                        $value[$column] = $child->$column;
+                        $value[$column] = $child[$column];
                     }
-                    $values[] = $values;
+                    $values[] = $value;
                 }
                 if (!empty($values)) {
-                    $class::deleteAll(['and', $linkFilter, ['in', [$columns, $values]]]);
+                    $class::deleteAll(['and', $linkFilter, ['in', $columns, $values]]);
                 }
             } else {
                 $class::deleteAll($linkFilter);
@@ -107,6 +108,9 @@ class RelationBehavior extends \yii\base\Behavior
                     call_user_func($options['afterSave'], $detail, $index);
                 }
             }
+        }
+        if($indexBy !== false){
+            $relation->indexBy($oldIndexBy);
         }
         return [!$error,$modelDetails];
     }
