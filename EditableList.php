@@ -64,7 +64,7 @@ class EditableList extends \yii\widgets\ListView
         $class = $this->modelClass;
         $result = array_merge($this->clientOptions, [
             'counter' => $this->dataProvider->getCount(),
-            'template' => $this->renderItem(new $class, '_key_'),
+            'template' => $this->renderItem(new $class, '_key_','_index_'),
             'itemTag' => ArrayHelper::getValue($this->itemOptions, 'tag', 'div'),
         ]);
 
