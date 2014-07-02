@@ -79,7 +79,7 @@
         addRow: function() {
             var $e = $(this);
             var settings = listData[$e.prop('id')].settings;
-            var $row = $(settings.template.replace(/_index_/g, settings.counter++));
+            var $row = $(settings.template.replace(/_key_/g, settings.counter++));
             if (settings.afterAddRow !== undefined) {
                 settings.afterAddRow.call(this, $row);
             }

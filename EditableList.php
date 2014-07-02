@@ -40,7 +40,9 @@ class EditableList extends \yii\widgets\ListView
         }
         $this->dataProvider = Yii::createObject([
                 'class' => 'yii\data\ArrayDataProvider',
-                'allModels' => $this->allModels
+                'allModels' => $this->allModels,
+                'sort' => false,
+                'pagination' => false
         ]);
         if (!isset($this->options['id'])) {
             $this->options['id'] = $this->getId();
@@ -62,7 +64,7 @@ class EditableList extends \yii\widgets\ListView
         $class = $this->modelClass;
         $result = array_merge($this->clientOptions, [
             'counter' => $this->dataProvider->getCount(),
-            'template' => $this->renderItem(new $class, '', '_index_'),
+            'template' => $this->renderItem(new $class, '_key_'),
             'itemTag' => ArrayHelper::getValue($this->itemOptions, 'tag', 'div'),
         ]);
 
